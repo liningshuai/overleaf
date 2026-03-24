@@ -1,0 +1,13 @@
+.env
+.env.backup
+.tmp/
+backup/
+emails.txt
+*.log
+*.err
+cpolar-portable/
+cpolar-install-*/
+cpolar-*.zip
+cpolar-webui.html
+Thumbs.db
+.DS_Store

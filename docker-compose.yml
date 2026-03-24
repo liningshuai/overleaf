@@ -1,0 +1,57 @@
+services:
+  sharelatex:
+    build:
+      context: .
+      dockerfile: Dockerfile.sharelatex
+    image: local/sharelatex:texlive2025-environ
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+    ports:
+      - "${OVERLEAF_PORT:-8080}:80"
+    environment:
+      OVERLEAF_APP_NAME: "${OVERLEAF_APP_NAME}"
+      OVERLEAF_NAV_TITLE: "${OVERLEAF_NAV_TITLE}"
+      OVERLEAF_SITE_URL: "${OVERLEAF_SITE_URL}"
+      OVERLEAF_MONGO_URL: "mongodb://mongo/sharelatex?replicaSet=overleaf"
+      OVERLEAF_REDIS_HOST: "redis"
+      ENABLE_CONVERSIONS: "true"
+      EMAIL_CONFIRMATION_DISABLED: "true"
+      OVERLEAF_BEHIND_PROXY: "false"
+    volumes:
+      - overleaf_data:/var/lib/overleaf
+      - overleaf_logs:/var/log/overleaf
+    networks:
+      - overleaf
+
+  mongo:
+    image: mongo:8.0
+    hostname: mongo
+    restart: unless-stopped
+    command: ["--replSet", "overleaf", "--bind_ip_all"]
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - overleaf
+
+  redis:
+    image: redis:7.2
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - overleaf
+
+volumes:
+  overleaf_data:
+  overleaf_logs:
+  mongo_data:
+  redis_data:
+
+networks:
+  overleaf:
+    driver: bridge

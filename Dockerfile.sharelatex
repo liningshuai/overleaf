@@ -1,0 +1,10 @@
+FROM sharelatex/sharelatex:latest
+
+# TeX Live in this base image is 2025. Pin tlmgr to the matching frozen
+# repository to avoid cross-release errors, then install missing LaTeX packages.
+RUN tlmgr option repository https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2025/tlnet-final \
+    && tlmgr install \
+      collection-latexrecommended \
+      collection-fontsrecommended \
+      collection-latexextra \
+      environ lineno times booktabs amsfonts units microtype xcolor
