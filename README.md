@@ -100,6 +100,13 @@ Use these helper scripts for Docker volume migration:
 .\scripts\restore-overleaf-data.ps1 -BackupDir .\backup
 ```
 
+If the new computer cannot pull Docker images reliably, export the images from the old computer and import them offline on the new computer:
+
+```powershell
+.\scripts\export-overleaf-images.ps1
+.\scripts\import-overleaf-images.ps1
+```
+
 ## 7. Useful commands
 ```powershell
 docker compose logs -f

@@ -25,7 +25,13 @@ If you want the new computer to contain the same projects and users, back up tho
 .\scripts\backup-overleaf-data.ps1 -StopStack
 ```
 
-3. Copy the generated `backup/` folder to the new computer with a USB drive, LAN share, or cloud disk.
+3. If the new computer cannot access Docker Hub reliably, also export the Docker images:
+
+```powershell
+.\scripts\export-overleaf-images.ps1
+```
+
+4. Copy the generated `backup/` folder to the new computer with a USB drive, LAN share, or cloud disk.
 
 ## On the new computer
 Install these first:
@@ -51,6 +57,18 @@ If you copied the `backup/` folder from the old machine, restore the Docker data
 
 ```powershell
 .\scripts\restore-overleaf-data.ps1 -BackupDir .\backup
+```
+
+If the new computer cannot pull images from Docker Hub, import the offline image archive first:
+
+```powershell
+.\scripts\import-overleaf-images.ps1 -InputFile .\backup\overleaf-images.tar
+```
+
+Then start without rebuilding:
+
+```powershell
+docker compose up -d
 ```
 
 If you are starting from scratch instead of restoring old data, bootstrap the stack with:
